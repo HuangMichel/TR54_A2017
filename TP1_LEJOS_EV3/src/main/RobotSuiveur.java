@@ -5,15 +5,12 @@ import lejos.hardware.lcd.LCD;
 public class RobotSuiveur{
 	
 	/*
-	 * Fonction qui suit un robot leader version 0
-	 * @param D distance de r¨¦f¨¦rence entre 2 robot
-	 * @param a parametre de calcul du pourcentage pour appliquer sur la vitesse du robot
-	 * @param Ts temps du cycle
+	 * Fonction qui suit un robot leader version 0 qui s'appelle Tout ou Rien
 	 * @param v_max vitesse max de d¨¦but
 	 * @param robot issue de la classe RobotController
 	 * @param sensor issue de la classe SensorController
 	 */
-	public void FollowLeaderV0(int D, float a, float Ts, float v_max, RobotController robot, SensorController sensor) {
+	public void FollowLeaderV0(float v_max, RobotController robot, SensorController sensor) {
 		boolean bool = true;
 		float distance;
 		String dataSpeedCSV = "dataSpeedV0.csv";
@@ -51,20 +48,25 @@ public class RobotSuiveur{
 	 * @param robot issue de la classe RobotController
 	 * @param sensor issue de la classe SensorController
 	 */
-	public void FollowLeaderV1(int D, float a, float Ts, float v_max, RobotController robot, SensorController sensor) {
+	public void FollowLeaderV1(float D, float a, float Ts, float v_max, RobotController robot, SensorController sensor) {
 		boolean bool = true;
 		float distance;
 		String dataSpeedCSV = "dataSpeedV1.csv";
 		String dataDistanceCSV = "dataDistanceV1.csv";
 		float v = v_max;
+		float pourcentage;
+		
 		robot.setMotorSpeed((int)v, (int)v);
 		while(bool) {
 			distance = sensor.distance();
-			v = this.V1(v_max, D, Ts, distance);
+			pourcentage = this.V1(a, D, Ts, distance);
+			v = pourcentage * v_max;
 			robot.saveCSVfile(v, dataSpeedCSV);
 			robot.saveCSVfile(distance, dataDistanceCSV);
 			LCD.drawString("Distance " + distance, 0, 0);
 			LCD.drawString("Vitesse " + v, 0, 2);
+			LCD.drawString("% " + pourcentage, 0, 4);
+			robot.setMotorSpeed((int)v, (int)v);
 		}
 		
 		robot.stop();
@@ -82,7 +84,7 @@ public class RobotSuiveur{
 	 * @param robot issue de la classe RobotController
 	 * @param sensor issue de la classe SensorController
 	 */
-	public void FollowLeaderV2(int D, float a, float Ts, float v_max, RobotController robot, SensorController sensor) {
+	public void FollowLeaderV2(float D, float a, float Ts, float v_max, RobotController robot, SensorController sensor) {
 		boolean bool = true;
 		float distance;
 		float v;
@@ -99,7 +101,7 @@ public class RobotSuiveur{
 
 			pourcentage = this.V2(a, D, Ts, distance, v);
 			LCD.drawString("%" + pourcentage, 0, 2);
-			v = pourcentage * v;
+			v = pourcentage * v_max;
 			robot.setMotorSpeed((int)v, (int)v);
 			LCD.drawString("Chgmt vitesse " + v, 0, 4);
 			
@@ -118,8 +120,8 @@ public class RobotSuiveur{
 	 * @param D distance de r¨¦f¨¦rence entre 2 robot
 	 * @param a parametre de calcul du pourcentage pour appliquer sur la vitesse du robot
 	 * @param Ts temps du cycle
-	 * @param distance, la distance entre les deux robots ¨¤ un moment t
-	 * @return vitesse
+	 * @param distance, la distance entre les deux robots ¨¤ un instant t donnee
+	 * @return pourcentage
 	 */
 	public float V1(float a, float D, float Ts, float distance) {
 		return Math.max(Math.min(50, a * (distance - D)), 0);
@@ -130,8 +132,8 @@ public class RobotSuiveur{
 	 * @param D distance de r¨¦f¨¦rence entre 2 robot
 	 * @param a parametre de calcul du pourcentage pour appliquer sur la vitesse du robot
 	 * @param Ts temps du cycle
-	 * @param distance, la distance entre les deux robots ¨¤ un moment t
-	 * @param speed la vitesse du robot ¨¤ un moment t
+	 * @param distance, la distance entre les deux robots ¨¤ un instant t donnee
+	 * @param speed la vitesse du robot ¨¤ un instant t donnee
 	 * @return pourcentage
 	 */
 	public float V2(float a, float D, float Ts, float distance, float speed) {
