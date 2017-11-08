@@ -8,6 +8,9 @@ public class RobotLeader extends RobotController{
 		this.setMotorSpeed(500, 500);
 	}
 	
+	/**
+	 * deplacement de robot
+	 */
 	public void move() {
 		while(true) {
 			this.forward();
