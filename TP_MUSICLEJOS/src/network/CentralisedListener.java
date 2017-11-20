@@ -1,8 +1,7 @@
 package network;
 
 import java.nio.ByteBuffer;
-
-import lejos.hardware.lcd.LCD;
+import java.util.Collection;
 
 public class CentralisedListener implements BroadcastListener{
 	
@@ -33,15 +32,19 @@ public class CentralisedListener implements BroadcastListener{
 	
 	@Override
 	public void onBroadcastReceived(byte[] message) {
-		//data = ByteBuffer.wrap(message).getFloat();
-		//LCD.drawString(String.valueOf(data), 0, 0);
+		
 		String m = new String(message);
 		if(m.contentEquals("ready")) {
-			this.ready = true;
-			LCD.drawString(m, 0, 0);
+			this.ready =  true;
 		}else {
-			data = Float.parseFloat(m);
-			LCD.drawString(String.valueOf(data), 0, 1);
+			this.data = ByteBuffer.wrap(message).getFloat();
 		}
+		
+	}
+
+	@Override
+	public void onBroadcastReceived2(Collection<Float> message) {
+		// null
+		
 	}
 }

@@ -5,18 +5,15 @@ import java.io.IOException;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import network.BroadcastReceiver;
-import network.DecentralizedListener;
+import network.CentralisedListener;
 
-public class LauncherDecentralized {
-	
+public class LauncherReceiver {
 	/**
 	 * Starts a robot, according to the pressed button, a different track will be played
 	 * @param args
 	 * @throws IOException
 	 */
-	
-	private static BroadcastReceiver receiver;
-	private static DecentralizedListener listener;
+	private static CentralisedListener listener = new CentralisedListener();
 	private static float firstTime; //le temps qu'il recoit
 	private static float secondTime;//le temps qui joue
 	private static float dT = 0.1f;
@@ -30,13 +27,12 @@ public class LauncherDecentralized {
 		final Track violoncello = trackReader.read(LauncherReceiver.class.getResourceAsStream("/lejos/music/samples/score01/violoncello.txt"));
 		final Track contrabass = trackReader.read(LauncherReceiver.class.getResourceAsStream("/lejos/music/samples/score01/contrabass.txt"));
 		
-		receiver = BroadcastReceiver.getInstance();
-		receiver.addListener(listener);
-		
 		violin1.setBpm(90);
 		violin2.setBpm(90);
 		violoncello.setBpm(90);			
 		contrabass.setBpm(90);
+		
+		BroadcastReceiver.getInstance().addListener(listener);
 		
 		final int button = Button.waitForAnyPress();
 		
@@ -52,17 +48,23 @@ public class LauncherDecentralized {
 	}
 	
 	private static void playTrack(Track track) {	
+		
 		LCD.clear();
 		LCD.drawString("Playing...", 0, 2);
 		while(!track.isOver()) {
 			secondTime = track.getTime();
-			LCD.drawString( "Time play" + String.format("%.4f", secondTime), 0, 3);
+			LCD.drawString(String.format("Timeplay %.4f", secondTime), 0, 3);
 			firstTime= listener.getData();
-			LCD.drawString(String.format("Time receive" + "%.4f", firstTime), 0, 6);
-			if((Math.abs(firstTime - secondTime) > dT)) {
-				track.setTime(firstTime);
+			if(firstTime == 0) {
+				LCD.drawString("Waiting ready by the manager", 0, 4);
+			}else {
+				LCD.drawString(String.format("Timercve %.4f", firstTime), 0, 5);
+				if((Math.abs(firstTime - secondTime) > dT)) {
+					track.setTime(firstTime);
+				}
 			}
 			track.play();
 		}
+		
 	}
 }

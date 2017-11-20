@@ -3,9 +3,13 @@ package network;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Singleton class used to receive the broadcast
@@ -15,6 +19,7 @@ import java.util.List;
 public class BroadcastReceiver implements AutoCloseable {
 	
 	private static BroadcastReceiver instance = null;
+	private static Map<InetAddress, Float> messages = new HashMap();
 	
 	/**
 	 * Gets an instance of the broadcast receiver 
@@ -94,12 +99,29 @@ public class BroadcastReceiver implements AutoCloseable {
 			this.broadcastReceiver = broadcastReceiver;
 		}
 		
+		/*
+		 * Centralized mode
 		@Override
 		public void run() {
 			while(!this.stop) {
 				final DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 				try {
 					this.broadcastReceiver.getSocket().receive(packet);
+					this.broadcastReceiver.fireBroadcastReceived(packet.getData());
+				} catch (IOException e) {
+					//
+				}
+			}
+		}*/
+		
+		//Decentralized mode
+		@Override
+		public void run() {
+			while(!this.stop) {
+				final DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+				try {
+					this.broadcastReceiver.getSocket().receive(packet);
+					messages.put(packet.getAddress(), ByteBuffer.wrap(packet.getData()).getFloat());
 					this.broadcastReceiver.fireBroadcastReceived(packet.getData());
 				} catch (IOException e) {
 					//

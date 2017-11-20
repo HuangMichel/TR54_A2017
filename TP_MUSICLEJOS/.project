@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>TP_LEJOSMUSIC</name>
+	<name>TP_MUSICLEJOS</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -23,8 +18,6 @@
 	</buildSpec>
 	<natures>
 		<nature>org.lejos.ev3.ldt.leJOSEV3Nature</nature>
-		<nature>io.sarl.eclipse.SARLProjectNature</nature>
-		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>
