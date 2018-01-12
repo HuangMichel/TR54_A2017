@@ -73,11 +73,11 @@ public class SensorController {
 		return this.colorsensor.getColorID();
 	}
 	
-	/*
-	 * Fonction qui permet de print les couleurs qu'il voit par le capteur couleurs
-	 *@paral color couleur a afficher
+	/**
+	 * Gets the name of the color
+	 * @param color couleur
 	 */
-	public void printColor(int color) {
+	public void getColorName(int color) {
 		String colorName = "";
 		switch(color) {
 		case Color.NONE: 
@@ -113,7 +113,7 @@ public class SensorController {
 			break;
 		}
 		
-		LCD.drawString(colorName, 0, 0);
+		return colorName;
 	}
 	
 	/*
@@ -124,5 +124,4 @@ public class SensorController {
 		this.ultrasonicsensor.close();
 		LCD.clear();
 	}
-	
 }
